@@ -9,7 +9,7 @@ Hello I am Puppycat, PhD. I am a Python master.
 
 My favorite food is spinach. I like to SCREAM when I don't get my way but that's okay because I'm cute.
 
-![](/images/puppycat.jpg){:height="300px"}
+![](/images/meowmeow.jpg){:height="300px"}
 
 ### Contact me
 
