@@ -18,12 +18,12 @@ avatar: ![image](.images/Huang.jpg)
 # Includes an icon in the footer for each username you enter
 footer-links:
   dribbble:
-  email:
+  email: dhuang135@ucla.edu
   facebook:
   flickr:
-  github: HarlinLee/HarlinLee.github.io # replace with your repo
+  github: dhuang135/dhuang135.github.io
   instagram:
-  linkedin:
+  linkedin: https://www.linkedin.com/in/danhuang1/
   pinterest:
   rss: # just type anything here for a working RSS icon
   twitter: 
@@ -41,7 +41,7 @@ google_analytics:
 
 # Your website URL (e.g. http://barryclark.github.io or http://www.barryclark.co)
 # Used for Sitemap.xml and your RSS feed
-url:
+url: 
 
 # If you're hosting your site at a Project repository on GitHub pages
 # (http://yourusername.github.io/repository-name)
