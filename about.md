@@ -3,14 +3,19 @@ layout: page
 title: About
 permalink: /about/
 ---
-Hello I am Puppycat, PhD. I am a Python master.
+Hi! 
+
+My name is Daniel Huang and I'm currently a 4th year Psychology major at UCLA. 
+Feel free to look around!
+
+My linkedin, email, and other ways to contact me are located at the bottom of the page. 
 
 ## More information
 
-My favorite food is spinach. I like to SCREAM when I don't get my way but that's okay because I'm cute.
+Here's my cat :). 
 
 ![](/images/meowmeow.jpg){:height="300px"}
 
 ### Contact me
 
-[puppycat@puppycat.org](mailto:puppycat@puppycat.org)
+[dhuang135@ucla.edu](mailto:dhuang135@ucla.edu)
