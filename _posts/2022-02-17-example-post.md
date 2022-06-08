@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Example post
+published: false
 ---
 
 In this post, I'll show how to create a helpful histogram of some synthetic data. 
