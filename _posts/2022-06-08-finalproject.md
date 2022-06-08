@@ -4,6 +4,10 @@ title:  "Bob the Builder Project"
 permalink: posts/blog-post-bobthebuilder
 author: Daniel Huang, Emily Jenks, Pei Xi Kwok, Vida Rusli
 ---
+Resumes are important
+
+> Let's make one.
+
 
 ## About
 This is a webapp based project that helps to automate a resume based on information that you provide. 
@@ -29,7 +33,7 @@ SOFTWARE REQUIREMENTS:
 As an extension of the resume builder, we wanted to generate job recommendations for the user based on their desired job and location. Currently, our code is able to take the user's input and execute a search on indeed.com and return the corresponding search results from the site in the form of a table. Users are able to see information about the job posting, including the job title, a brief job description, as well as the link to the job posting itself. 
 We initially intended to scrape job postings from LinkedIn, but eventually landed on Indeed.com due to challenges with bypassing LinkedIn's login requirements. Our code makes use of Beautiful Soup library to scrape the job postings, and the web driver from selenium to test out our automated search. By using Beautiful Soup functions such as select(),find(),get_text() in tandem with CSS selectors, the program extracts the job title, the company name, the company location, the date of posting, the job description, and the link to the job posting from the first 10 results of the search. The information would then be loaded into a table formatted in HTML and displayed on the same page.
 
-In order to handle the user's input and make the table output readable, we did a number of string manipulations within our function. Inside url's, spaces are formatted as '%20'. In order for our scraper to access the right website, with the correct job and location requested by the user we made sure that the formatting inside the current_url would be similar to if someone were to access indeed on their own. Afterwards we would load the html content from that website and loop through each job posting, which we could select with our bs4 css selections (e.g. content.select('.job_seen_beacon')). Using lists, we can store and index each aspect of the job posting. Like with the user_job and user_location, we applied string manipulations to some of the elements scraped from indeed such that our job postings are more readable for the user. We then pass all of these variables back to the 'indeed_test.html', and the html would render the values into a neat table for the user to access.
+In order to handle the user's input and make the table output readable, we did a number of string manipulations within our function. Inside url's, spaces are formatted as '%20'. In order for our scraper to access the right website, with the correct job and location requested by the user we made sure that the formatting inside the current_url would be similar to if someone were to access indeed on their own. Afterwards we would load the html content from that website and loop through each job posting, which we could select with our bs4 css selections (e.g. content.select('.job_seen_beacon'). Using lists, we can store and index each aspect of the job posting. Like with the user_job and user_location, we applied string manipulations to some of the elements scraped from indeed such that our job postings are more readable for the user. We then pass all of these variables back to the 'indeed_test.html', and the html would render the values into a neat table for the user to access.
 
 ```python
 def submit():
@@ -91,7 +95,6 @@ def submit():
         except:
             return render_template('indeed_test.html', error = True)
 ```
-- one figure
 
 ![indeed_scraper.png]({{ site.baseurl }}/images/indeed_scraper.png)
 
@@ -307,6 +310,7 @@ HTML was used in creating the formatting for the website including the following
 </div>
 {% endblock %}{% endraw %}
 ```  
+
 > CSS
 - style.css: creates the style formatting for about.html, base.html, form.html, indeed_test.html, main_better.html
 - resume_style.css: creates the style formatting for resume.html
