@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Discussion Activity
+published: false
 ---
 
 Discussion activity for today with Jekyll.
