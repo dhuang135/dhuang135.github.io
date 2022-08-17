@@ -1,13 +1,12 @@
 ---
 layout: post
-title:  "Bob the Builder Project"
+title:  Bob the Builder Project
 permalink: posts/blog-post-bobthebuilder
 author: Daniel Huang, Emily Jenks, Pei Xi Kwok, Vida Rusli
 ---
-Resumes are important
+Resumes are important, but hard to create.
 
-> Let's make one.
-
+> Let's make this process easier!
 
 ## About
 This is a webapp based project that helps to automate a resume based on information that you provide. 
