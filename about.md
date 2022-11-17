@@ -9,7 +9,7 @@ My name is Daniel Huang and I'm currently a 4th year Psychology major at UCLA.
 
 I will be graduating in December of 2022 with a Bachelors in Psychology with a Specialization in Computing!
 
-My linkedin, email, and other ways to contact me are located at the bottom of the page. 
+My Linkedin, email, and other ways to contact me are located at the bottom of the page. 
 
 ## More information
 
