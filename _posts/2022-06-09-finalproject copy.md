@@ -8,7 +8,7 @@ Resumes are important, but hard to create.
 
 > Let's make this process easier!
 
-<!-- ## About
+## About
 This is a webapp based project that helps to automate a resume based on information that you provide. 
 The webapp also provides job recommendations based on Indeed.
 
