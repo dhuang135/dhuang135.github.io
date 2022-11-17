@@ -7,6 +7,7 @@ author: Daniel Huang
 Resumes are important, but hard to create.
 
 > Let's make this process easier!
+
 <!---
  ## About
 This is a webapp based project that helps to automate a resume based on information that you provide. 
