@@ -324,3 +324,13 @@ This is what the current home page will look like to the user!
 
 This page is what users will intially see before inputting their responses.
 ![resume_form.png]({{ site.baseurl }}/images/resume_form.png)
+
+## Concluding Remarks
+
+Bob the Builder Project is designed a developed by a team of four UCLA undergraduates. The project objectives was to integrate web scraping and flask to design a "quick-and-easy" resume builder deployed through heroku. This resume would be able to help fellow undergraduates especially freshman and sophomores who are starting from scratch. 
+
+The project was set to also include job and keyword recommendations through web scraping but the team decided to only implement job recommendations which was done through scraping Indeed as mentioned before. However, this program can be further developed to include it along with other creative aspects.
+
+Some ideas to further develop the webapp is to allow users to choose different templates for the resume, check for punctuation, spelling and grammar mistakes or provide selections for user input. 
+
+**Thank you for taking the time to read through our documentation and explaination of our code and webapp! :)**
