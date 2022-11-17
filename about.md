@@ -16,7 +16,7 @@ Attached is a photo of Oreo, my Norwegian Forest cat mix, alongside my favorite 
 
 ![](/images/meowmeow.jpg){:height="300px"}
 
-![](/images/pfpprof.JPG){:height="300px"}
+![](/images/pfpprof.JPG){:height="600px"}
 
 
 ### Contact me
