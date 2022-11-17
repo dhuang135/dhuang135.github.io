@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Bob the Builder Project
-permalink: posts/blog-post-bobthebuilder
 author: Daniel Huang
+published: false
 ---
 Resumes are important, but hard to create.
 
