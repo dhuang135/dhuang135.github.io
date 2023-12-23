@@ -5,9 +5,11 @@ permalink: /about/
 ---
 Hi! 
 
-My name is Daniel Huang and I'm currently a 4th year Psychology major at UCLA. 
+My name is Daniel Huang, welcome to my site.
 
-I will be graduating in December of 2022 with a Bachelors in Psychology with a Specialization in Computing!
+I graduated in December of 2022 with a Bachelors in Psychology with a Specialization in Computing!
+
+This website functions as a 'collage' of projects and guides of data science, analysis, and general coding. 
 
 My Linkedin, email, and other ways to contact me are located at the bottom of the page. 
 
@@ -22,4 +24,4 @@ Attached is a photo of Oreo, my Norwegian Forest cat mix, alongside my favorite 
 
 ### Contact me
 
-[dhuang135@ucla.edu](mailto:dhuang135@ucla.edu)
+[dhuang135@gmail.com](mailto:dhuang135@gmail.com)
