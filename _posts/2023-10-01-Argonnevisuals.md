@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Geopython
-permalink: posts/testhw-3
+title: Applying Visualization to Real World Data
+permalink: posts/Argonne
 author: Daniel Huang
 ---
-Geopython joke
+Why do programmers keep confusing Halloween and Christmas?
 
-> A furricane.
+> Oct 31 == Dec 25
 
 ## Intro 
 
