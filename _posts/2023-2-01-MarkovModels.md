@@ -1,6 +1,6 @@
 ---
 layout: post
-title: WordGenerator
+title: Ghostwriter
 permalink: posts/Markov
 author: Daniel Huang
 ---
@@ -10,303 +10,192 @@ What word becomes shorter when you add two letters to it?
 
 ## Intro 
 
-Machine Learning has become a hot topic in recent years, everyone wants to be able to utilize this powerful tool in their individual enterprises. Today, we are going to take a look on how to build our own machine learning model using tensorflow and keras. Using our newly aqcuired skills, we can the appropriate changes to our model to create one that can accurately identify dogs and cats based on image alone. With this image classification problem, we can use further use transfer learning to achieve our goals. 
+Hello! Today we are going to be creating a simple language model that performs a task similar to something that you would ask ChatGPT - "Write like 'x' author"
 
-### 🐈1
+Using tools like iteration and dictionaries, we will create a family of Markov language models for generating text. An -th order Markov model is a function that constructs a string of text one letter at a
+time, using only knowledge of the most recent letters. You can think of it as a writer with a "memory" of letters.
 
-As always, lets import our libaries and modules! Addtionally, lets run the code to extract the data we will be working with today and seperate them into useful datasets.
+### 📚1
+
+As always, lets import our libaries and modules! 
+
+Note, s is our training text that comes from the first 10 chapters of Jane Austen's novel Emma. Intuitively, we are going to write a program that "writes like Jane Austen". 
+For the purpose of cohesiveness, I have only put the beginning parts of the novel in this code snippet shown below, but the actual code runs on the entire 10 chapters. If you would like to follow along, please copy/paste the first 10 chapters of the book which you can find from the archives at Project Gutenberg.
 
 ``` python
-import os
-from tensorflow.keras import utils 
-import tensorflow as tf
-import tensorflow.keras as keras
-import numpy as np
-import matplotlib.pyplot as plt
+import random
 
-# location of data
-_URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip'
-
-# download the data and extract it
-path_to_zip = utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
-
-# construct paths
-PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
-
-train_dir = os.path.join(PATH, 'train')
-validation_dir = os.path.join(PATH, 'validation')
-
-# parameters for datasets
-BATCH_SIZE = 32
-IMG_SIZE = (160, 160)
-
-# construct train and validation datasets 
-train_dataset = utils.image_dataset_from_directory(train_dir,
-                                                   shuffle=True,
-                                                   batch_size=BATCH_SIZE,
-                                                   image_size=IMG_SIZE)
-
-validation_dataset = utils.image_dataset_from_directory(validation_dir,
-                                                        shuffle=True,
-                                                        batch_size=BATCH_SIZE,
-                                                        image_size=IMG_SIZE)
-
-# construct the test dataset by taking every 5th observation out of the validation dataset
-val_batches = tf.data.experimental.cardinality(validation_dataset)
-test_dataset = validation_dataset.take(val_batches // 5)
-validation_dataset = validation_dataset.skip(val_batches // 5)
-
-
-AUTOTUNE = tf.data.AUTOTUNE
-train_dataset = train_dataset.prefetch(buffer_size=AUTOTUNE)
-validation_dataset = validation_dataset.prefetch(buffer_size=AUTOTUNE)
-test_dataset = test_dataset.prefetch(buffer_size=AUTOTUNE)
+s = "CHAPTER I Emma Woodhouse, handsome, clever, and rich, with a comfortable home and..."
 ```
 
-By now, we should have 3 datasets (train, validation, and test) which we can use to train our machine learning model and eventually evaluate it on our test data. 
-Let's take a look at some of our train data so we have a better understanding of what data we are working with.
+### 📚2
+
+For us to properly train up our model, we need to first split up our training data into understandable parts. We will first get all the individual words, the move onto "n-grams", which *n* stands for the number of letters. 
+
+For example, **bol** and **old** are the two 3-grams that occur in the string bold.
 
 ``` python
+def count_characters(string):
+  '''
+  This function counts the number of times each character appears in a user-supplied 
+  '''
+    dictionary = {}
+    mystring = string
+    for i in range(len(mystring)): #iterates through the given string's length
+    dictionary.update({mystring[i]:mystring.count(mystring[i])}) #for every index, 
+    #s.count(s[i]) returns the count of a character
 
-def cat_dog_maker():
-    images, labels = list(train_dataset.take(1))[0]
+  return dictionary
 
-    plt.figure(figsize=(8, 8))
-    #cats
-    for i in range(3):
-      ax = plt.subplot(2,3, i+1)
-      index = np.where(labels == 0)[0][i]
-      plt.imshow(images[index].numpy().astype("uint8"))
-      plt.title("cats")
-      plt.axis("off")
 
-    #dogs
-    for i in range(3):
-      ax = plt.subplot(2,3, i+4)
-      index = np.where(labels == 1)[0][i]
-      plt.imshow(images[index].numpy().astype("uint8"))
-      plt.title("dogs")
-      plt.axis("off")
+
+def count_ngrams(string, n):
+ '''
+ This function counts the number of times a user-defined n-character sequence appear
+ and creates a dictionary of n-character sequences based off the string 
+ '''
+    my_string = string
+    dict = {}
+    for i in range(len(my_string)): #iterates through the given string's length
+    if i <= len(my_string)-n: #removes possibilities of undesired n-char sequences 
+    if my_string[i:i+n] in dict: #if the char alr is in the dictionary, pass
+    continue
+    else:
+    dict.update({my_string[i:i+n]:my_string.count(my_string[i:i+n])}) 
+    #for every new char, updates the dictionaries' with its key and value
+ 
+ return dict
+```
+
+Great! Now that we have created those two functions, lets give them a spin
+
+```python
+count_characters("tortoise")
+count_ngrams("believe in me", n = 10)
+```
+
+> {'t': 2, 'o': 2, 'r': 1, 'i': 1, 's': 1, 'e': 1}
+
+> {'believe in': 1, 'elieve in ': 1, 'lieve in m': 1, 'ieve in me': 1} 
+
+Awesome, both functions work as expected. Something to note, for the ngrams example shown above, I used a 10-gram, but obviously you have the freedom to test with whatever gram and whatever sample text you want.
+
+Alright, lets get cracking at this Markov Model, now that we have created some helpful baseline functions
+
+``` python
+def markov_text(s, n = 5, length = 100, seed = "Emma Woodhouse"):
+  '''
+  This function will take the following inputs:
+  s -> given string from Jane Austen Book
+  n -> given length of chars
+  length -> how long the generated text will be
+  seed -> the starting text in which the text will build off.
+  '''
+  my_text = seed #inialize output variable
+  x = count_ngrams(s, n+1) #x stores the (n+1)-grams based off the n-gram
+  t = list(x.items()) #t is a list of the dictionary returned from count_ngrams
+  options = [] #for random
+  weights = [] #for random
+  matches = [] #initialize empty list to contain n+1 grams whose n chars match recent
+  recent = seed[-n:] #initialize recent as the last n char of seed
     
-    plt.show()
-
-#call function
-cat_dog_maker()
+  while len(my_text) <= length: #runs the loop till my_text reaches length
+  
+    for item in t: #iterates each tuple in t 
+      if item[0][:n].__contains__(recent): #if the key in the tuple contains rece
+        matches.append((item[0],item[1])) #add the tuple to matches
+  
+    for items in matches: #for each tuple in matches
+      options.append(items[0]) #add the first element of the tuple to options
+      weights.append(items[1]) #add the second element of the tuple to weights
+  
+    if weights == []: #if there are no matches for recent in s, reset recent to seed
+      recent = seed[-n:]
+      continue
+  
+    my_text += (((random.choices(options, weights))[-1])[-1]) #append last char
+    options.clear() #clears option list for next iteration
+    weights.clear() #clears weights list for next iteration
+    matches.clear() #clears matches list for next iteration
+    recent = my_text[-n:] #updates recent to new n-char sequence
+    
+    print (my_text)
 ```
 
-![](/images/hw3fig1.PNG)
+### 📚3
 
-Wow! From our graph we can see that our data is split into photos of various cats and dogs. Lets get a better look at our entire training dataset.
+Before we proceed, lets summarize what this function does, as it has a lot of moving parts!
 
-``` python
-labels_iterator= train_dataset.unbatch().map(lambda image, label: label).as_numpy_iterator()
+Taking in a set of inputs, markov_text will attempt to complete a string with a set length (length) based off a seed word (seed) and the input text (s), using a certain limitation of reading characters at a time (n) to do so.
 
-cats = 0
-dogs = 0
+This is achieved through analyzing (n+1)-grams from the source text, where the frequency of these (n+1)-grams guides the selection of each subsequent character. The function employs a Markov chain approach, where the future state (next character) depends only on the current state (the most recent n characters). As a result, the output text is a probabilistically generated sequence that mimics the style and character patterns of the source text, while the seed ensures a specific starting point for the text generation process. 
 
-for labels in labels_iterator:
-  if labels == 0:
-    cats += 1
-  else: 
-    dogs +=1
+Additionally, there is a failsafe such that if there are no (n+1) grams match the current *recent* n-char sequence, the function resets *recent* to the last n characters of the seed - allowing the function to continue generation in this circumstance.
 
-cats, dogs
-```
-> (1000, 1000)
+### 📚4
 
-From our label_iterator, we were able to extract the labels of our dataset, which are encoded as 0's and 1's (representing the two elements of our label class: cat and dog). We can see that there is an equal number of cats and dogs in the train_dataset, whose ratio is also reflective of the entire datasets! 
+Nice! Now that we have a clear picture on what exactly this function does, lets test it out!
 
-When creating a machine learning model, its oftentimes best to refer to the effectiveness of a model by comparing it to the a baseline machine learning model, which just guesses the most most frequent label in a dataset. For our purposes, since the availibility of cats and dogs in our dataset is the same, we can expect the baseline to have a 50% chance of guessing correctly on our dataset.
-
-### 🐈2
-
-Now that we have a better understanding of what data we are working with, lets start creating our machine learning model!
-
-``` python
-model1 = tf.keras.Sequential([
-          keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(160, 160, 3)),
-          keras.layers.MaxPooling2D((2, 2)), 
-          keras.layers.Conv2D(32, (3, 3), strides = (2,2), activation='relu'),
-          keras.layers.MaxPooling2D((2, 2)),
-          keras.layers.Conv2D(32, (3, 3), activation='relu'),
-          keras.layers.Flatten(), #input to dense must be flattened from 3d -> 1d array
-          keras.layers.Dropout(0.2), #hide some neurons 
-          keras.layers.Dense(64, activation='relu'),
-          keras.layers.Dense(2, activation='sigmoid') # number of nodes = classes in your dataset
-])
-
-model1.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-              metrics=['accuracy'])
-
-history = model1.fit(train_dataset, 
-                     epochs = 20, 
-                     validation_data= validation_dataset)
-
-#code for plotting our history 
-#is identical for each model, refer to this code snippet if needed 
-plt.plot(history.history["accuracy"], label = "training")
-plt.plot(history.history["val_accuracy"], label = "validation")
-plt.gca().set(xlabel = "epoch", ylabel = "accuracy")
-plt.legend()
-plt.show()
+```python
+markov_text(s, n = 1, length = 50, seed = "Emma Woodhouse")
+markov_text(s, n = 2, length = 50, seed = "Emma Woodhouse")
+markov_text(s, n = 3, length = 50, seed = "Emma Woodhouse")
 ```
 
-![](/images/hw3figmodel1history.PNG)
+>Emma Woodhousey simared d. Fr Hawaven nepes hing a
 
-Amazing!!! For our first iteration of our model, we were already able to get a consistent **54-55%** validation accuracy on our validation dataset!
-Compared to our baseline model, we are slightly more accurate but not by a large margin. 
-In terms of overfitting, model1 is definetly overfitted because our training accuracy is much higher than our validation accuracy. 
+>Emma Woodhouse's in in he his and his be perm bacc
 
-### 🐈3
-Ok! Now that we are getting into the swing of things for creating and optimizing our model, lets introduce the idea of *data augmentation*. Data augmentation refers to the practice of including modified copies of the same image in the training set, and by feeding these modified copies into our model, our model will learn how to identify cats and dogs **even better**!
+>Emma Woodhouse, you know of marriet, whom to the i
 
-Lets take a quick look at two data augmentation layers and what they do to images!
-``` python
-plt.figure(figsize=(10, 10))
-plt1.figure(figsize=(10, 10))
+Hmm, very interesting, it seems like the smaller the n-gram, the worse the performance of our model is. Lets test this out with a larger length to confirm our suspicions.
 
-image = images[1].numpy().astype("uint8")
-for i in range(9):
-  augmented_image = keras.layers.RandomFlip("horizontal_and_vertical")(image, training = True),
-  ax = plt.subplot(3, 3, i + 1)
-  plt.imshow(augmented_image[0].numpy().astype("uint8"))
-  plt.axis("off")
-
-image = images[5].numpy().astype("uint8")
-for i in range(9):
-  augmented_image = keras.layers.RandomRotation(0.2)(image, training = True),
-  ax = plt1.subplot(3, 3, i + 1)
-  plt1.imshow(augmented_image[0].numpy().astype("uint8"))
-  plt1.axis("off")
-``` 
-![](/images/hw3fig2flipped.PNG)
-![](/images/hw3fig2rotated.PNG)
-
-Lets take these layers and throw them into our model!
-
-``` python
-model2 = tf.keras.Sequential([
-          keras.layers.RandomFlip("horizontal_and_vertical"),
-          keras.layers.RandomRotation(0.2),
-          keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(160, 160, 3)),
-          keras.layers.MaxPooling2D((2, 2)), 
-          keras.layers.Conv2D(32, (3, 3), strides = (2,2), activation='relu'),
-          keras.layers.MaxPooling2D((2, 2)),
-          keras.layers.Conv2D(32, (3, 3), activation='relu'),
-          keras.layers.Flatten(), #input to dense must be flattened from 3d -> 1d array
-          keras.layers.Dropout(0.2), #hide some neurons 
-          keras.layers.Dense(64, activation='relu'),
-          keras.layers.Dense(2, activation='sigmoid') # number of nodes = classes in your dataset
-])
-
-model2.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-              metrics=['accuracy'])
-
-history = model2.fit(train_dataset, 
-        epochs = 20, 
-        validation_data= validation_dataset)
-```
-![](/images/hw3figmodel2history.PNG)
-
-Intriguing!!! Our validation and training accuracy trends are all over the place in comparison to model1. Nevertheless, we can see that the model is hovering somewhat around the **53-56%** validation accuracy range.
-Compared to our accuracy in model1, we are seeing similar outcomes, albeit slightly less consistent in this current model. 
-Unlike model1, model2 does not seem to suffer from any sort of overfitting problems where the validation and training accuracies are similar. 
-
-### 🐈4
-Alright! We are making good progress. Now lets add another layer on this cake! We are going to employ a preprocessing layer, which essentially takes our data and normalizes it into more digestable forms for our model to train more efficiently on.
-
-``` python
-i = tf.keras.Input(shape=(160, 160, 3))
-x = tf.keras.applications.mobilenet_v2.preprocess_input(i)
-preprocessor = tf.keras.Model(inputs = [i], outputs = [x])
-
-model3 = tf.keras.Sequential([
-          preprocessor,
-          keras.layers.RandomFlip("horizontal_and_vertical"),
-          keras.layers.RandomRotation(0.2),
-          keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(160, 160, 3)),
-          keras.layers.MaxPooling2D((2, 2)), 
-          keras.layers.Conv2D(64, (3, 3), strides = (2,2), activation='relu'),
-          keras.layers.MaxPooling2D((2, 2)),
-          keras.layers.Conv2D(32, (3, 3), activation='relu'),
-          keras.layers.MaxPooling2D((2, 2)), 
-          keras.layers.Flatten(), #input to dense must be flattened from 3d -> 1d array
-          keras.layers.Dropout(0.2), #hide some neurons 
-          keras.layers.Dense(64, activation='relu'),
-          keras.layers.Dense(2, activation='sigmoid') # number of nodes = classes in your dataset
-])
-
-model3.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-              metrics=['accuracy'])
-
-history = model3.fit(train_dataset, 
-        epochs = 20, 
-        validation_data= validation_dataset)
-```
-![](/images/hw3figmodel3history.PNG)
-
-Fantastic!!! Our validation and training accuracy in model3 far surpasses model1 and 2's. We were able to see a validation accuracy that is consistently hovering around **71-74%** accuracy range.
-Our validation and training accuracy in model3 far surpasses model1 and 2's, which is awesome!
-Now that our accuracy has made a significant leap, it is time to consider if we are overfitted our model. All things considered, our model3 is still not at the point in which it is overfitted.
-
-### 🐈5
-Now that we are approaching great and greater models, lets add another layer to ice it off! We are going to use an idea called "TRANSFER LEARNING", which essentially means that we are going to take a pre-existing model for our identification task. 
-
-Firstly, we need to access the base model of this pre-existing model.
-``` python
-IMG_SHAPE = IMG_SIZE + (3,)
-base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
-                                               include_top=False,
-                                               weights='imagenet')
-base_model.trainable = False
-
-i = tf.keras.Input(shape=IMG_SHAPE)
-x = base_model(i, training = False)
-base_model_layer = tf.keras.Model(inputs = [i], outputs = [x])
-``` 
-
-Now that our model has been created, lets incorporate it into our main model and see how it preforms!
-
-``` python
-model4 = tf.keras.Sequential([              
-          preprocessor,
-          keras.layers.RandomFlip("horizontal_and_vertical"),
-          keras.layers.RandomRotation(0.2),
-          base_model_layer,
-          keras.layers.GlobalMaxPooling2D(),
-          keras.layers.Dropout(0.2),
-          keras.layers.Dense(2, activation='sigmoid') # number of nodes = classes in your dataset
-])
-
-model4.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-              metrics=['accuracy'])
-
-history = model4.fit(train_dataset, 
-    epochs = 20, 
-    validation_data = validation_dataset)
-```
-![](/images/hw3figmodel4history.PNG)
-
-OUTSTANDING!!!!!! 
-We are getting a consistent **96-97%** validation accuracy on this model!
-Compared to our other models, model4 blows everyone in the dust in terms of accuracy.
-Now, with the insane accuracy of model4 overfitting is a possibility we may consider. With such a high accuracy, there is a real chance that our model4 is *too fitted* to our dataset due to the small discrepency between validation and training.
-
-### 🐈6
-FANTABULOUS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-We've really explored some important concepts in image classification, but there's much more to learn. 
-
-For now, lets just appreciate the models we've created now. Using our best preforming model, model4, lets evaluate how it does against the test dataset!
-
-``` python
-model4.evaluate(test_dataset)
-#6/6 [==============================] - 1s 47ms/step - loss: 0.0992 - accuracy: 0.9688
+```python
+for n in range (1,11) #note that we start at range 1!
+  markov_text(s, n = n, length = 200, seed = "Emma Woodhouse")
+  print ("\n")
 ```
 
-Amazing! Against our test dataset, model4 still preforms to standard, obtaining a **96.88%** accuracy on the images. Woohoo! That's something to celebrate. 
+> Emma Woodhousen Elelknompuns o hed cout id sharissevete w. not ipe aghoveld Bubjer int i
+the Sm ped her henvingo s gh a ighelinn, d coonththic d anumor. y he coris, ank ssss 
+ut sh sis. m s tut ofrt 
 
-That's it for today folks. Go enjoy the rest of your day and thanks for reading! 
+> Emma Woodhouself well!”—und am a like my fich hout quall ad, nothild's had, becif hets t
+ook he ned day the is hich hopleforeake con der. Misty. Rom so thimand he he was eventio
+n hink as grain al not S
+
+> Emma Woodhouse, a mome should itselves say throw not restering make firstatisfield by at
+of cred, a ver, but, the hout if you returns a givent! to becons overy well, can writed;
+and my lad a ver think
+
+> Emma Woodhouse away charade her manner: she, sured, that if you men may be and out he wa
+y, Mr. Knight she my deal of such more undour me! but for having our satisfied and, as y
+ou musiness.”“I have tha
+
+> Emma Woodhouse's accepted the parlour-boarder. My only was to mission. At last time inde
+ed, if you wrote her of what she is bring him, the air and a sister a longer will not li
+ke his, came to as to be
+
+> Emma Woodhouse, with a little education called for her. He could, and never boy, but a s
+lave, May its approval beam in my father, or any thing of nothing which she count
+ry to say that since I k
+
+> Emma Woodhouse. Do help me. I never thing. After a little thing,” cried Emma had a very
+good-nature, and the house for some warm prepossesses to be upon those for which nobody
+hereabouts to attempted.
+
+> Emma Woodhouse has given her a little in a lover.—“The expressions of the earth! their l
+ittle raised on one side of this speeches which she could supposed; till they were not h
+ere. I wish you may be a
+
+> Emma Woodhouse told me. He did speak yesterday?”“Certainly, it is too young to settle. H
+is mother and sisters, telling her to be forming themselves with a “very true; and it is
+only one to please hers
+
+> Emma Woodhouses were first in consequence of her caresses; and her place had been saying
+so much against the scruples of his mother's, been the consequence of her sister at seve
+nteen. She was not lost
+
+Cool! It seems like our theory was reinforced by this test. Feel free to mess around with the inputs, or try different sources of text and copy your favorite author! Have a great day!
+
+*Note - As n increases, the amount of text (the ngram) that is "matched" to the source text is increased, such that each pair has more characters, and less likely to stop in a sentence/word (b/c words [on average] are usually greater than 5 characters). More characters in the matching grams means that there is a higher chance that it will be grammaticaly correct (ex. the 2 gram 'us' n+1 gram's can be us., use, us , us?: a 6 gram 'house.' n+1 gram's would have house. , house. R, house. T, etc).*
