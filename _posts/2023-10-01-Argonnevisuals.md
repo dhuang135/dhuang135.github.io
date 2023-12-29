@@ -215,7 +215,7 @@ fig.layout.template = None
 fig.show()
 ```
 
-{% include illinois_countydata2023.html %}
+{% include illinois_countydata2023_1.html %}
 
 In the code above, we are utilizing figurefactory's create_choropleth function to create these visualizations that break down number of students per county in Illinois. 
 
@@ -274,6 +274,8 @@ plt.show()
 ```
 
 ![](/images/mentorwords.png)
+
+<img src="../images/mentorwords.png" width = "100%" height = "100%">
 
 In the code above, we did the following steps:
 1. Set up data
