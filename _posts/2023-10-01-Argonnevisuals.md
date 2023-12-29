@@ -273,7 +273,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-![](/images/mentorwords.PNG)
+![](/images/mentorwords.png)
 
 In the code above, we did the following steps:
 1. Set up data
@@ -303,7 +303,7 @@ plt.savefig('mentorpairs.png', dpi=900, facecolor='w')
 plt.show()
 ```
 
-![](/images/mentorpairs.PNG)
+![](/images/mentorpairs.png)
 
 Looking at these visualizations, it lets us quickly parse through the hundreds of responses we got about how students felt about their mentors, and what their experience being mentored by a staff scientist was like. This lets us understand the general sentiment of our cohorts.
 
@@ -313,7 +313,7 @@ Utilizing the process that I created above to parse through the free response qu
 
 Below's output is exactly that. 
 
-![](/images/planspairs.PNG)
+![](/images/planspairs.png)
 
 This informs us of what kinds of plans students in our cohort are looking to pursue, as we gave students the ability to freely respond instead of be restricted to multiple choice. Even so, how helpful is this histogram? Are there better ways to show this data?
 
@@ -373,7 +373,7 @@ plt.tight_layout()
 plt.savefig('toppairsafterinternship.png', dpi=1200, facecolor='w')
 ```
 
-![](/images/toppairsafterinternship.PNG)
+![](/images/toppairsafterinternship.png)
 
 What do these pairs mean? Well, the size of the circle tells us how 'popular' that word pair exists within the source data. Therefore, looking left to right on the visualization, we can see that most students are planning to go back to school to finish their degree or pursue a graduate degree.
 
