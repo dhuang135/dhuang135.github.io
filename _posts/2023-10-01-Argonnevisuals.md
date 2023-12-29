@@ -160,7 +160,7 @@ fig.update_layout(legend=dict(
 fig.layout.template = None
 fig.show()
 ```
-{% include illinois_countydata2022.html %}
+{% include illinois_countydata2022_1.html %}
 
 ```python
 #23'
@@ -272,10 +272,7 @@ sns.barplot(
 plt.tight_layout()
 plt.show()
 ```
-
 ![](/images/mentorwords.png)
-
-<img src="../images/mentorwords.png" width = "100%" height = "100%">
 
 In the code above, we did the following steps:
 1. Set up data
@@ -283,6 +280,8 @@ In the code above, we did the following steps:
 3. Create a new dataframe of our cleaned words, and visualize!
 
 We can extend this process to analyzing 2-grams of words/feedback that students had given.
+
+*Note: If the image is too small, right click on the image and open in a new tab, you will get a fullscreen view of the graphic!*
 
 ```python
 counted_2 = Counter(ngrams(filtered_text.split(),2)) #count all the pairs in the filtered_text string
