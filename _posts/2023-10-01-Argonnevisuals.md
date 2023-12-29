@@ -273,7 +273,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-{% include mentorwords.html %}
+![](/images/mentorwords.PNG)
 
 In the code above, we did the following steps:
 1. Set up data
