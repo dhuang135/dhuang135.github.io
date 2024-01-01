@@ -12,7 +12,7 @@ What word becomes shorter when you add two letters to it?
 
 Hello! Today we are going to be creating a simple language model that performs a task similar to something that you would ask ChatGPT - "Write like 'x' author"
 
-Using tools like iteration and dictionaries, we will create a family of Markov language models for generating text. An -th order Markov model is a function that constructs a string of text one letter at a
+Using tools like iteration and dictionaries, we will create a family of Markov language models for generating text. An n-th order Markov model is a function that constructs a string of text one letter at a
 time, using only knowledge of the most recent letters. You can think of it as a writer with a "memory" of letters.
 
 ### 📚1
